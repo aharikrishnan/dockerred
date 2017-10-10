@@ -1,0 +1,33 @@
+#!/usr/bin/with-contenv bash
+
+set -e
+
+# Copy default config from cache
+if [ ! "$(ls -A /etc/ssh)" ]; then
+   cp -a /etc/ssh.cache/* /etc/ssh/
+fi
+
+# Generate Host keys, if required
+if ! ls /etc/ssh/ssh_host_* 1> /dev/null 2>&1; then
+    ssh-keygen -A
+fi
+
+echo "USER is: $user"
+
+ssh_home="/home/$user/.ssh"
+
+# Fix permissions, if writable
+if [ -w $ssh_home ]; then
+    chown -R "$user:$user" $ssh_home && chmod -R 700 $ssh_home/
+fi
+if [ -w $ssh_home/authorized_keys ]; then
+    chown "$user:$user" $ssh_home/authorized_keys
+    chmod 600 $ssh_home/authorized_keys
+fi
+
+# Warn if no config
+if [ ! -e $ssh_home/authorized_keys ]; then
+  echo "WARNING: No SSH authorized_keys found for root"
+fi
+
+exec /usr/sbin/sshd -f /etc/ssh/sshd_config -D

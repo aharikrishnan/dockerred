@@ -25,16 +25,18 @@ RUN apk add --update \
       tini
 
 # User Management
-RUN apk add --update sudo
+RUN apk add --update sudo openssh
+RUN ssh-keygen -A
 
-ARG id
+ARG uid
+ARG gid
 ARG user
 ARG pass
 
 RUN \
-      adduser -D -u "$id" -s /bin/bash -h "/home/$user" "$user" && \
+      adduser -D -u "$uid" -s /bin/bash -h "/home/$user" "$user" && \
       (echo "$user:$pass" | chpasswd) && \
-      chown -R "$user:$user" "/home/$user" && \
+      chown -R "$uid:$gid" "/home/$user" && \
       # Give coffee making powers to user
       (echo "%sudo ALL=(ALL) ALL" | tee -a /etc/sudoers) && \
       addgroup -S sudo && \
@@ -42,19 +44,18 @@ RUN \
 
 # Service management
 
-RUN apk add --update s6
-
+ADD s6-overlay-amd64.tar.gz /
 RUN \
       addgroup s6 && \
       addgroup "$user" s6
 
-RUN \
-  mkdir /etc/services.d/consul-template/supervise/ && \
-  mkfifo /etc/services.d/consul-template/supervise/control && \
-  chown -R root:s6 /etc/services.d/consul-template && \
-  chmod g+w /etc/services.d/consul-template/supervise/control /etc/services.d/consul-template
+ADD root /
 
-USER "$user"
-WORKDIR "/home/$user"
-ADD ssh .ssh
+#RUN \
+      #chown -R root:s6 /etc/services.d /var/run && \
+      #chmod g+w /etc/services.d /var/run
+
+#USER "$user"
+#WORKDIR "/home/$user"
+#ADD ssh "home/$user/.ssh"
 

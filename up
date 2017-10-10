@@ -1,0 +1,3 @@
+#!/bin/bash
+
+export user=`whoami` uid=`id -u` gid=`id -g`; docker-compose build red  && docker-compose rm red && docker-compose up red

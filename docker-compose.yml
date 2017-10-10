@@ -7,12 +7,22 @@ services:
       context: red
       dockerfile: Dockerfile
       args:
-        id: 1000
-        user: wolf
-        pass: wolf
-
-    entrypoint: ["/sbin/tini", "--"]
-    command: ["/bin/bash"]
+        uid: ${uid}
+        gid: ${gid}
+        user: ${user}
+        pass: ${user}
+    environment:
+      user: ${user}
+      uid: ${uid}
+      gid: ${gid}
+    entrypoint: ["/init"]
+    #entrypoint: ["/sbin/tini", "--"]
+    #command: ["/bin/bash"]
+    volumes:
+      - ./red/ssh/id_rsa.pub:/home/${user}/.ssh/authorized_keys
+      - ./red/work:/home/${user}/work
+    ports:
+      - "2222:22"
 
 #services:
   #notebook:
