@@ -1,0 +1,2 @@
+#! /bin/bash
+ssh -i red/ssh/id_rsa -p2222 hari@127.0.0.1

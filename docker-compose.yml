@@ -6,15 +6,12 @@ services:
     build:
       context: red
       dockerfile: Dockerfile
-      args:
-        uid: ${uid}
-        gid: ${gid}
-        user: ${user}
-        pass: ${user}
     environment:
-      user: ${user}
       uid: ${uid}
+      user: ${user}
       gid: ${gid}
+      group: ${group}
+      passwd: ${passwd}
     entrypoint: ["/init"]
     #entrypoint: ["/sbin/tini", "--"]
     #command: ["/bin/bash"]
