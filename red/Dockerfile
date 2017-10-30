@@ -40,11 +40,4 @@ ADD s6-overlay-amd64.tar.gz /
 
 ADD root /
 
-#RUN \
-      #chown -R root:s6 /etc/services.d /var/run && \
-      #chmod g+w /etc/services.d /var/run
-
-#USER "$user"
-#WORKDIR "/home/$user"
-#ADD ssh "home/$user/.ssh"
 
